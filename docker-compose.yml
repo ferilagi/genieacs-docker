@@ -34,7 +34,7 @@ services:
     genieacs:
         depends_on:
             - 'mongo'
-        image: invis/genieacs-stb
+        image: ferilagi/genieacs:arm64
         restart: always
         container_name: "genieacs"
         environment:
@@ -47,10 +47,10 @@ services:
             - GENIEACS_EXT_DIR=/opt/genieacs/ext
             - GENIEACS_MONGODB_CONNECTION_URL=mongodb://mongo/genieacs
         ports:
-            - "7547:7547"
-            - "7557:7557"
-            - "7567:7567"
-            - "3000:3000"
+            - 7547:7547
+            - 7557:7557
+            - 7567:7567
+            - 3000:3000
         volumes:
             - opt_volume:/opt
         networks:
