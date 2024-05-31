@@ -45,7 +45,7 @@ services:
             - GENIEACS_UI_ACCESS_LOG_FILE=/var/log/genieacs/genieacs-ui-access.log
             - GENIEACS_DEBUG_FILE=/var/log/genieacs/genieacs-debug.yaml
             - GENIEACS_EXT_DIR=/opt/genieacs/ext
-            - GENIEACS_MONGODB_CONNECTION_URL=mongodb://mongo/genieacs
+            - GENIEACS_MONGODB_CONNECTION_URL=mongodb://root:secretPASSWORD@mongo:27017/genieacs
         ports:
             - 7547:7547
             - 7557:7557
