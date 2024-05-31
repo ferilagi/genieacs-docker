@@ -1,0 +1,74 @@
+# Use this file to pull GenieACS from DockerHub #
+version: "3"
+services:
+# Dockerfile for MongoDB STB
+    mongo:
+        image: ferilagi/mongodb-stb:6.0.11
+        container_name: mongodb
+        restart: always
+        ports:
+        - 27017:27017
+        environment:
+        MONGO_INITDB_ROOT_USERNAME: root
+        MONGO_INITDB_ROOT_PASSWORD: secretPASSWORD
+        volumes:
+        - data_db:/data/db
+        - data_configdb:/data/configdb
+         networks:
+            - genieacs_network
+    mongo-express:
+        image: mongo-express
+        container_name: mongoexpress
+        restart: always
+        ports:
+        - 8081:8081
+        environment:
+        ME_CONFIG_MONGODB_URL: mongodb://root:Digimon21@mongo:27017/
+        ME_CONFIG_MONGODB_ADMINUSERNAME: root
+        ME_CONFIG_MONGODB_ADMINPASSWORD: secretPASSWORD
+        ME_CONFIG_BASICAUTH: true
+        ME_CONFIG_BASICAUTH_USERNAME: admin
+        ME_CONFIG_BASICAUTH_PASSWORD: admin123
+
+# Dockerfile: https://hub.docker.com/r/drumsergio/genieacs/dockerfile
+    genieacs:
+        depends_on:
+            - 'mongo'
+        image: invis/genieacs-stb
+        restart: always
+        container_name: "genieacs"
+        environment:
+            - GENIEACS_UI_JWT_SECRET=changeme
+            - GENIEACS_CWMP_ACCESS_LOG_FILE=/var/log/genieacs/genieacs-cwmp-access.log
+            - GENIEACS_NBI_ACCESS_LOG_FILE=/var/log/genieacs/genieacs-nbi-access.log
+            - GENIEACS_FS_ACCESS_LOG_FILE=/var/log/genieacs/genieacs-fs-access.log
+            - GENIEACS_UI_ACCESS_LOG_FILE=/var/log/genieacs/genieacs-ui-access.log
+            - GENIEACS_DEBUG_FILE=/var/log/genieacs/genieacs-debug.yaml
+            - GENIEACS_EXT_DIR=/opt/genieacs/ext
+            - GENIEACS_MONGODB_CONNECTION_URL=mongodb://mongo/genieacs
+        ports:
+            - "7547:7547"
+            - "7557:7557"
+            - "7567:7567"
+            - "3000:3000"
+        volumes:
+            - opt_volume:/opt
+        networks:
+            - genieacs_network
+
+### THIS SERVICE IS JUST FOR TESTING PURPOSES ###
+    # genieacs-sim:
+        # depends_on:
+            # - 'genieacs'
+        # image: ferilagi/genieacs-sim
+        # container_name: "genieacs-sim"
+        # networks:
+            # - genieacs_network
+
+volumes:
+    data_db:
+    data_configdb:
+    opt_volume:
+
+networks:
+    genieacs_network:
